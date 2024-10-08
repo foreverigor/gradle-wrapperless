@@ -10,6 +10,8 @@ import java.util.Set;
 import static java.lang.System.getProperty;
 import static java.lang.System.out;
 import static java.net.http.HttpResponse.BodyHandlers.*;
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.WRITE;
 
 /**
  * Pure Java implementation of gradle wrapper script
@@ -36,7 +38,7 @@ interface gradlew {
     if (!Files.exists(wrapperPath)) {
       if (verbose) out.println("Gradle wrapper not found, downloading..");
       var client = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NORMAL).build();
-      var response = client.send(HttpRequest.newBuilder(URI.create(gradleWrapperUrl)).build(), ofFile(wrapperPath, StandardOpenOption.CREATE));
+      var response = client.send(HttpRequest.newBuilder(URI.create(gradleWrapperUrl)).build(), ofFile(wrapperPath, CREATE, WRITE));
       if (response.statusCode() != 200) {
         System.err.println("Downloading failed with status " + response.statusCode());
         System.exit(response.statusCode());

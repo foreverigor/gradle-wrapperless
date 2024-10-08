@@ -1,3 +1,9 @@
 rootProject.name = "gradle-wrapperless"
 
-include("java11", "jbangMax", "jbangMin", "jbangNoReflect")
+include(
+  "java8",
+  "java11",
+  "jbangMin",
+  "jbangMax",
+  "jbangNoReflect"
+)
