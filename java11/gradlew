@@ -1,0 +1,60 @@
+#!/usr/bin/env java -Xmx64m -Xms64m -Dorg.gradle.appname=gradlew --source 11
+//usr/bin/env java -Xmx64m -Xms64m -Dorg.gradle.appname=gradlew --source 11 "$0" "$@" ; exit $? # For the case when it's run by bash
+// -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:5005
+
+import java.net.*;
+import java.net.http.*;
+import java.nio.file.*;
+import java.util.Set;
+
+import static java.lang.System.getProperty;
+import static java.lang.System.out;
+import static java.net.http.HttpResponse.BodyHandlers.*;
+
+/**
+ * Pure Java implementation of gradle wrapper script
+ * Java 11 Version improves by:<p>
+ *   1. Using JDK http client
+ *   2. Using Java 9 Factory methods & var
+ */
+interface gradlew {
+
+  String gradleWrapperJar = "gradle/wrapper/gradle-wrapper.jar";
+  String gradleWrapperUrl = "https://github.com/gradle/gradle/raw/master/" + gradleWrapperJar;
+  boolean verbose = Set.of("info", "debug").contains(getProperty("org.gradle.logging.level", "").toLowerCase());
+
+  String launcherSourcefile = getProperty("jdk.launcher.sourcefile", "");
+
+  static void main(String[] args) throws Exception {
+    var projectRoot = launcherSourcefile.isBlank() ? findProjectRoot(Path.of("")) : Path.of(launcherSourcefile).getParent();
+    if (verbose) out.println("project root: " + projectRoot);
+    var wrapperPath = projectRoot.toAbsolutePath().normalize().resolve(gradleWrapperJar);
+    if (!Files.exists(wrapperPath.getParent())) {
+      System.err.println("Gradle wrapper directory not found");
+      System.exit(1);
+    }
+    if (!Files.exists(wrapperPath)) {
+      if (verbose) out.println("Gradle wrapper not found, downloading..");
+      var client = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NORMAL).build();
+      var response = client.send(HttpRequest.newBuilder(URI.create(gradleWrapperUrl)).build(), ofFile(wrapperPath, StandardOpenOption.CREATE));
+      if (response.statusCode() != 200) {
+        System.err.println("Downloading failed with status " + response.statusCode());
+        System.exit(response.statusCode());
+      }
+    }
+    try (var classLoader = new URLClassLoader(new URL[]{wrapperPath.toUri().toURL()})) {
+      if (verbose) out.println("Launching Gradle wrapper");
+      classLoader.loadClass("org.gradle.wrapper.GradleWrapperMain")
+        .getMethod("main", String[].class)
+        .invoke(null, (Object) args);
+    }
+  } // void main(String[] args)
+
+  private static Path findProjectRoot(Path start) {
+    for (var path = start.toAbsolutePath(); path != null; path = path.getParent()) {
+      if (Files.exists(path.resolve("gradle/wrapper"))) return path;
+    }
+    return start;
+  }
+
+} // interface gradlew

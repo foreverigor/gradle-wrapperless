@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/gradle-wrapperless.iml" filepath="$PROJECT_DIR$/gradle-wrapperless.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/gradle-wrapperless.java11.iml" filepath="$PROJECT_DIR$/.idea/modules/gradle-wrapperless.java11.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/gradle-wrapperless.jbangMax.iml" filepath="$PROJECT_DIR$/.idea/modules/gradle-wrapperless.jbangMax.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/gradle-wrapperless.jbangMin.iml" filepath="$PROJECT_DIR$/.idea/modules/gradle-wrapperless.jbangMin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/gradle-wrapperless.jbangNoReflect.iml" filepath="$PROJECT_DIR$/.idea/modules/gradle-wrapperless.jbangNoReflect.iml" />
+    </modules>
+  </component>
+</project>
